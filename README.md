@@ -1,3 +1,3 @@
-# CMake C Template Project
+# AES-GCM
 
-A empty C project template using CMake.
+A modularized aes-gcm implementation.
