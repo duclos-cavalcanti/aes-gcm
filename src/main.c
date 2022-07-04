@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "aes.h"
-#include "gcm.h"
+// #include "gcm.h"
 
 void printMatrix(const uint8_t* state, char* header) {
     printf("%s: \n[ ", header);

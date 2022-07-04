@@ -1,17 +1,1 @@
-[
-{
-  "directory": "/home/duclos/Documents/projects/embedded/aes/build",
-  "command": "/usr/bin/cc  -I/home/duclos/Documents/projects/embedded/aes/include  -g -O0 -Wall -o CMakeFiles/bar.dir/src/aes.c.o -c /home/duclos/Documents/projects/embedded/aes/src/aes.c",
-  "file": "/home/duclos/Documents/projects/embedded/aes/src/aes.c"
-},
-{
-  "directory": "/home/duclos/Documents/projects/embedded/aes/build",
-  "command": "/usr/bin/cc  -I/home/duclos/Documents/projects/embedded/aes/include  -g -O0 -Wall -o CMakeFiles/bar.dir/src/gcm.c.o -c /home/duclos/Documents/projects/embedded/aes/src/gcm.c",
-  "file": "/home/duclos/Documents/projects/embedded/aes/src/gcm.c"
-},
-{
-  "directory": "/home/duclos/Documents/projects/embedded/aes/build",
-  "command": "/usr/bin/cc  -I/home/duclos/Documents/projects/embedded/aes/include  -g -O0 -Wall -o CMakeFiles/bar.dir/src/main.c.o -c /home/duclos/Documents/projects/embedded/aes/src/main.c",
-  "file": "/home/duclos/Documents/projects/embedded/aes/src/main.c"
-}
-]
+build/compile_commands.json

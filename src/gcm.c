@@ -3,6 +3,11 @@
 #include "aes.h"
 #include "gcm.h"
 
+void gcmAesEncrypt(uint8_t *input, const size_t input_size,
+                   const uint8_t *key, const uint8_t *iv,
+                   const uint8_t *auth, const size_t auth_size,
+                   uint8_t *output, uint8_t *tag);
+
 const uint8_t R[16] = {
     0xe1, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
@@ -221,12 +226,12 @@ void gcmGCTR(uint8_t* plaintext, uint8_t plaintext_size,
         if (i >= 2)
             gcmIncrement(counter);
 
-        gcmAesEncrypt(counter, key, tmp);
+        aesEncrypt(counter, key, tmp);
         xorBlocks(tmp, plaintext + (i - 1)*16, tmp);
         memcpy(ciphertext + (i - 1)*16, tmp, 16);
     }
 
-    gcmAesEncrypt(counter, key, tmp);
+    aesEncrypt(counter, key, tmp);
     xorBlocks(tmp, plaintext + (n - 1)*16, tmp);
     memcpy(ciphertext + (n - 1)*16, tmp, rem);
 }
@@ -236,7 +241,7 @@ void gcmAesEncrypt(uint8_t *input, const size_t input_size,
                    const uint8_t *auth, const size_t auth_size,
                    uint8_t *output, uint8_t *tag) {
 
-    uint8_t cipher[16], counter_enc[16], counter_enc_zero[16];
+    uint8_t cipher[16], counter_enc[16], J[16];
     uint8_t counter[16] = { 0 };
 
     gcm_context_t context = {
@@ -248,12 +253,12 @@ void gcmAesEncrypt(uint8_t *input, const size_t input_size,
     gcmInitializeJ(J, iv);
     gcmInitializeCounter(counter, iv);
 
-    gcmIncrement(counter, 0);
-    aesEncrypt(counter, key, counter_enc_zero);
+    gcmIncrement(counter);
+    aesEncrypt(counter, key, J);
     gcmHash(auth, auth_size, cipher, input_size, &context);
 
     for (context.round = 1; context.round < context.last + 1; context.round++) {
-        gcmIncrement(counter, context.round);
+        gcmIncrement(counter);
         aesEncrypt(counter, key, counter_enc);
         xorBlocks(counter_enc, input + (context.round - 1)*16, cipher);
 
@@ -261,7 +266,7 @@ void gcmAesEncrypt(uint8_t *input, const size_t input_size,
             gcmHash(auth, auth_size, cipher, input_size, &context);
 
             memcpy(tag, context.tag, 16);
-            xorBlocks(tag, counter_enc_zero, tag);
+            xorBlocks(tag, J, tag);
         } else {
             gcmHash(auth, auth_size, cipher, input_size, &context);
         }
@@ -286,12 +291,12 @@ int gcmAesDecrypt(const uint8_t *cipher, const size_t cipher_size,
     gcmInitializeJ(J, iv);
     gcmInitializeCounter(counter, J);
 
-    gcmIncrement(counter, 0);
+    gcmIncrement(counter);
     aesEncrypt(counter, key, J);
     gcmHash(auth, auth_size, cipher, cipher_size, &context);
 
     for (context.round = 1; context.round < context.last + 1; context.round++) {
-        gcmIncrement(counter, context.round);
+        gcmIncrement(counter);
         aesEncrypt(counter, key, counter_enc);
         xorBlocks(counter_enc, cipher + (context.round - 1)*16, plain);
 
