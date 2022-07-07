@@ -51,12 +51,12 @@ int aesTest(bool verbose) {
 
 
     if (!equalArrays(encrypted, correct_encrypted, 16)) {
-        printf("Encryption doesnt match");
+        printf("Encryption doesnt match\n");
         return 0;
     }
 
     if (!equalArrays(decrypted, plaintext, 16)) {
-        printf("Decryption doesnt match");
+        printf("Decryption doesnt match\n");
         return 0;
     }
 

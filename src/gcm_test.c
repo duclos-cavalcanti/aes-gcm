@@ -30,6 +30,8 @@ int gcmTest(bool verbose) {
         0x39, 0x3A, 0x00, 0x02,
     };
 
+    uint8_t ciphertext[64] = { 0 };
+
     const uint8_t iv[12] =
     {
         0x12, 0x15, 0x35, 0x24,
@@ -75,10 +77,15 @@ int gcmTest(bool verbose) {
     gcm_context_t gcm = {
         .plaintext = plaintext,
         .plaintext_size = 60,
+        .ciphertext = ciphertext,
+        .H = NULL,
         .key = key,
         .iv = iv,
+        .J0 = NULL,
+        .ICB = NULL,
         .auth = a,
         .auth_size = 28,
+        .tag = NULL
     };
 
     if (verbose) {
@@ -99,12 +106,12 @@ int gcmTest(bool verbose) {
     }
 
     if (!equalArrays(gcm.ciphertext, correct_encrypted, 60)) {
-        printf("Encryption doesnt match");
+        printf("Encryption doesnt match\n");
         return 0;
     }
 
     if (!equalArrays(gcm.tag, correct_tag, 16)) {
-        printf("Tag doesnt match");
+        printf("Tag doesnt match\n");
         return 0;
     }
 
