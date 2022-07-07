@@ -145,11 +145,12 @@ void gcmInitializeCounter(uint8_t* counter, const uint8_t* J) {
     memcpy(counter, J,  16);
 }
 
-void gcmIncrement(uint8_t *counter) {
+void gcmIncrement(uint8_t *counter, uint8_t *res) {
     uint32_t iter = 0;
     memcpy(&iter, counter + 12, 4);
     iter++;
-    memcpy(counter + 12, &iter, 4);
+    memcpy(res, counter, 12);
+    memcpy(res + 12, &iter, 4);
 }
 
 void gcmHash(const uint8_t* auth, size_t auth_size,
@@ -186,7 +187,7 @@ void gcmHash(const uint8_t* auth, size_t auth_size,
     }
 }
 
-void gcmGCTR(uint8_t* plaintext, uint8_t plaintext_size,
+void gcmGCTREncrypt(uint8_t* plaintext, uint8_t plaintext_size,
                  const uint8_t *key, const uint8_t *ICB,
                  uint8_t* ciphertext) {
     uint8_t tmp[16] = { 0 };
@@ -199,7 +200,7 @@ void gcmGCTR(uint8_t* plaintext, uint8_t plaintext_size,
 
     for (int i = 1; i < n; i++) {
         if (i >= 2)
-            gcmIncrement(counter);
+            gcmIncrement(counter, counter);
 
         aesEncrypt(counter, key, tmp);
         xorBlocks(tmp, plaintext + (i - 1)*16, tmp);
@@ -211,7 +212,50 @@ void gcmGCTR(uint8_t* plaintext, uint8_t plaintext_size,
     memcpy(ciphertext + (n - 1)*16, tmp, rem);
 }
 
-void gcmAesEncrypt(gcm_input_t *gcm, uint8_t *ciphertext) {
+void gcmGHASH(uint8_t* x_input, uint8_t* y_input,  const bool first_op_flag, const uint8_t *H, uint8_t *output) {
+    //TODO
+    //uint8_t n = (input_size % 16 == 0);
+
+    uint8_t x_block[16] = { 0 };
+    uint8_t y_block[16] = { 0 };
+    static uint8_t tmp[16] = { 0 };
+
+    if (first_op_flag) {
+        memcpy(y_block, zero, 16);
+    } else {
+        memcpy(y_block, y_input, 16);
+    }
+
+    memcpy(x_block, input, 16);
+    xorBlocks(x_block, y_block, tmp);
+    gcmMultiply(tmp, H, tmp);
+    //memcpy(y_block, tmp, 16);
+
+
+    //for (int i = 1; i < n; i++) {
+    //    
+    //    memcpy(x_block, input + (i-1)*16, 16);
+    //    xorBlocks(x_block, y_block, tmp);
+    //    gcmMultiply(tmp, H, tmp);
+    //    memcpy(y_block, tmp, 16);
+    //}
+
+    memcpy(output, tmp, 16);
+}
+
+void gcmGenerateTag(gcm_input_t* gcm) {
+//TODO
+//Wrapper around the GHASH function
+uint8_t n = (gcm->plaintext_size % 16 == 0) + (gcm->auth_size % 16 == 0) + 16;
+for (int i = 1; i < n; i++) {
+
+
+}
+
+
+}
+
+void gcmAesEncrypt(gcm_input_t *gcm) {
 
     uint8_t data[16], J[16];
     uint8_t counter[16] = { 0 };
@@ -221,9 +265,14 @@ void gcmAesEncrypt(gcm_input_t *gcm, uint8_t *ciphertext) {
             .last = (gcm->plaintext_size % 16 == 0) ?
                      gcm->plaintext_size / 16 :
                      gcm->plaintext_size / 16 + 1,
+            .gcm = gcm;
     };
-
+    
     gcmInitializeHashKey(&context, gcm->key);
-    gcmInitializeJ(J, gcm->iv);
-    gcmInitializeCounter(counter, gcm->iv);
+    gcmInitializeJ(gcm->J0, gcm->iv);
+    gcmIncrement(gcm->J0, gcm->ICB);
+    gcmGCTREncrypt(gcm->plaintext, gcm->plaintext_size, gcm->key, gcm->ICB, gcm->ciphertext);
+    //TODO
+    //GHASH function still to be added
+
 }
