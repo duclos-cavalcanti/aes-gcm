@@ -225,6 +225,31 @@ void gcmGCTREncrypt(uint8_t* input, uint8_t input_size,
     memcpy(output + (n - 1)*16, tmp, rem);
 }
 
+void gcmGCTRDecrypt(uint8_t* input, uint8_t input_size,
+                    const uint8_t *key, const uint8_t *ICB,
+                    uint8_t* output) {
+    uint8_t tmp[16] = { 0 };
+    uint8_t counter[16] = { 0 };
+
+    uint8_t n = (input_size % 16 == 0) ? input_size / 16 : input_size / 16 + 1;
+    uint8_t rem = input_size % 16;
+
+    gcmInitializeCounter(counter, ICB); // CB1 = ICB
+
+    for (int i = 1; i < n; i++) {
+        if (i >= 2)
+            gcmIncrement(counter, counter);
+
+        aesDecrypt(counter, key, tmp);
+        xorBlocks(tmp, input + (i - 1)*16, tmp);
+        memcpy(output + (i - 1)*16, tmp, 16);
+    }
+
+    aesDecrypt(counter, key, tmp);
+    xorBlocks(tmp, input + (n - 1)*16, tmp);
+    memcpy(output + (n - 1)*16, tmp, rem);
+}
+
 // LIMITATIONS
 // maximum size of plaintext + authentication = 1000 Bytes!
 // ciphertext in struct has to have some size!
