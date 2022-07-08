@@ -259,9 +259,9 @@ void gcmAesEncrypt(gcm_context_t *gcm) {
     uint8_t X[1000] = { 0 };
     size_t X_size = 0;
 
-    gcmInitializeHashKey(gcm->H, gcm->key);   // Hash key is encypted 0 (128 bits)
-    gcmInitializeJ(gcm->J0, gcm->iv);         // Jo = IV || 0 (31 bits) || 1
-    gcmIncrement(gcm->J0, gcm->ICB);
+    gcmInitializeHashKey(gcm->H, gcm->key);     // Hash key is encypted 0 (128 bits)
+    gcmInitializeJ(gcm->J0, gcm->iv);           // J0 = IV || 0 (31 bits) || 1
+    gcmIncrement(gcm->J0, gcm->ICB);            // ICB is incremented J0
 
 
     gcmGCTREncrypt(gcm->plaintext,
