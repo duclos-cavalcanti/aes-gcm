@@ -2,6 +2,7 @@
 #include <string.h>
 #include "aes.h"
 #include "gcm.h"
+#include "util.h"
 
 const uint8_t R[16] = {
     0xe1, 0x00, 0x00, 0x00,
@@ -215,7 +216,10 @@ void gcmGCTREncrypt(uint8_t* input, uint8_t input_size,
         if (i >= 2)
             gcmIncrement(counter, counter);
 
+        printf( "\n========= Iteration number: %i =========\n", i);
+        printArray(counter, 16, "Block before Encryption");
         aesEncrypt(counter, key, tmp);
+        printArray(tmp, 16, "Block after Encryption");
         xorBlocks(tmp, input + (i - 1)*16, tmp);
         memcpy(output + (i - 1)*16, tmp, 16);
     }

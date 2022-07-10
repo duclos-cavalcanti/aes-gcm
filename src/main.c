@@ -8,6 +8,6 @@
 #include "util.h"
 
 int main(int argc, char *argv[]) {
-    // aesTest(true);
+    //aesTest(true);
     gcmTest(true);
 }
