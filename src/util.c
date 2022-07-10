@@ -2,7 +2,6 @@
 
 void printArray(const uint8_t* arr, int size, char* header) {
     printf("-- %s --\n", header);
-    printf("\n");
     for (int i = 0; i < size; i++) {
         if (i % 4 == 0) {
             if (i == 0)
@@ -22,6 +21,7 @@ void printArray(const uint8_t* arr, int size, char* header) {
             printf(", ");
         }
     }
+    printf("\n");
 }
 
 int equalArrays(const uint8_t* a, const uint8_t* b, int size) {

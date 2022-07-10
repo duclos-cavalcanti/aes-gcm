@@ -60,6 +60,8 @@ int aesTest(bool verbose) {
         return 0;
     }
 
+
+    printf("Success!\n\n");
     return 1;
 }
 
