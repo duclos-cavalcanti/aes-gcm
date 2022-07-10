@@ -138,7 +138,6 @@ void gcmInitializeHashKey(uint8_t *H, const uint8_t *key) {
 
 void gcmInitializeJ(uint8_t *J, const uint8_t *iv) {
     const uint8_t one[4] = { 0x00, 0x00, 0x00, 0x01};
-
     memcpy(J, iv, 12);      // 96 bits
     memcpy(J + 12, one, 4); // 32 bits
 }
@@ -217,9 +216,8 @@ void gcmGCTREncrypt(uint8_t* input, uint8_t input_size,
             gcmIncrement(counter, counter);
 
         printf( "\n========= Iteration number: %i =========\n", i);
-        printArray(counter, 16, "Block before Encryption");
         aesEncrypt(counter, key, tmp);
-        printArray(tmp, 16, "Block after Encryption");
+        printArray(input + (i - 1)*16, 16, "Block before Encryption");
         xorBlocks(tmp, input + (i - 1)*16, tmp);
         memcpy(output + (i - 1)*16, tmp, 16);
     }
@@ -263,10 +261,18 @@ void gcmAesEncrypt(gcm_context_t *gcm) {
     uint8_t X[1000] = { 0 };
     size_t X_size = 0;
 
+    
+
+    
+
     gcmInitializeHashKey(gcm->H, gcm->key);     // Hash key is encypted 0 (128 bits)
     gcmInitializeJ(gcm->J0, gcm->iv);           // J0 = IV || 0 (31 bits) || 1
+    printf( "\n========= J0 =========\n");
+    printArray(gcm->J0, 16, "J0");
     gcmIncrement(gcm->J0, gcm->ICB);            // ICB is incremented J0
-
+    printf( "\n========= ICB =========\n");
+    printArray(gcm->ICB, 16, "ICB");
+    
 
     gcmGCTREncrypt(gcm->plaintext,
                    gcm->plaintext_size,

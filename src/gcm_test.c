@@ -6,6 +6,38 @@
 int gcmTest(bool verbose) {
     int result;
 
+    static uint8_t h_initial[16] =
+    {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+    };
+
+    static uint8_t j0_initial[16] =
+    {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+    };
+
+    static uint8_t icb_initial[16] =
+    {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+    };
+
+    static uint8_t tag_initial[16] =
+    {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+    };
+
     const uint8_t key[16] =
     {
         0xAD, 0x7A, 0x2B, 0xD0,
@@ -169,14 +201,25 @@ int gcmTest(bool verbose) {
         .plaintext_size = 60,
         .ciphertext = ciphertext,
         .H = NULL,
-        .key = key2,
-        .iv = iv2,
+        .key = NULL,
+        .iv = NULL,
         .J0 = NULL,
         .ICB = NULL,
         .auth = a2,
         .auth_size = 20,
         .tag = NULL
     };
+
+
+    //memcpy(gcm.plaintext, plaintext2, 60);
+    //memcpy(gcm.ciphertext, ciphertext, 60);
+    memcpy(gcm.H, h_initial, 16);
+    memcpy(gcm.key, key2, 16);
+    memcpy(gcm.iv, iv2, 12);
+    memcpy(gcm.J0, j0_initial, 16);
+    memcpy(gcm.ICB, icb_initial, 16);
+    memcpy(gcm.auth, a2, 20);
+    memcpy(gcm.tag, tag_initial, 16);
 
     if (verbose) {
         printf( "\n========= GCM =========\n");
