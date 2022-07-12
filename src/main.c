@@ -9,5 +9,6 @@
 
 int main(int argc, char *argv[]) {
     //aesTest(true);
-    gcmTest(true);
+    //gcmTest(true);
+    gcmTestRobotCommand(true);
 }

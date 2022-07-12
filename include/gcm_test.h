@@ -3,3 +3,4 @@
 #include <stdbool.h>
 
 int gcmTest(bool verbose);
+int gcmTestRobotCommand(bool verbose);

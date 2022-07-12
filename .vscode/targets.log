@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun Jul 10 15:57:04 2022
+# Make data base, printed on Tue Jul 12 18:09:08 2022
 
 # Variables
 
@@ -69,7 +69,7 @@ XAUTHORITY = /run/user/1000/gdm/Xauthority
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.98
+GNOME_TERMINAL_SERVICE = :1.93
 # makefile
 MAKEFLAGS = pqrR
 # makefile
@@ -99,13 +99,13 @@ SNAP_REEXEC =
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 4077
+VSCODE_PID = 3374
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/The-HP-255-Turing-Machine:@/tmp/.ICE-unix/2062,unix/The-HP-255-Turing-Machine:/tmp/.ICE-unix/2062
+SESSION_MANAGER = local/The-HP-255-Turing-Machine:@/tmp/.ICE-unix/2099,unix/The-HP-255-Turing-Machine:/tmp/.ICE-unix/2099
 # automatic
 *F = $(notdir $*)
 # environment
@@ -129,7 +129,7 @@ XMODIFIERS = @im=ibus
 # environment
 SHLVL = 1
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/9a53a02e_7b61_4eb5_914c_6a812e6ef104
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/6e63fe39_194a_4a7d_a69a_14dd1e2f10f8
 # environment
 MAKELEVEL := 0
 # default
@@ -181,7 +181,7 @@ SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := 
 # environment
-SYSTEMD_EXEC_PID = 2335
+SYSTEMD_EXEC_PID = 2378
 # environment
 DISPLAY = :0
 # environment
@@ -326,6 +326,6 @@ GNUmakefile:
 # strcache performance: lookups = 26 / hit rate = 11%
 # hash-table stats:
 # Load=23/8192=0%, Rehash=0, Collisions=0/26=0%
-# Finished Make data base on Sun Jul 10 15:57:04 2022
+# Finished Make data base on Tue Jul 12 18:09:08 2022
 
  
