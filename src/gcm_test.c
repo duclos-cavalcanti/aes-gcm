@@ -248,6 +248,28 @@ int gcmTest(bool verbose) {
         return 0;
     }
 
+    gcmAesDecrypt(&gcm);
+
+    if (verbose) {
+        printArray(gcm.plaintext, 60, "Decryption");
+        printArray(plaintext2, 60, "Correct Decryption");
+    }
+
+    if (verbose) {
+        printArray(gcm.tag, 16, "Tag");
+        printArray(correct_tag2, 16, "Correct Tag");
+    }
+
+    if (!equalArrays(gcm.plaintext, plaintext2, 60)) {
+        printf("Decryption doesnt match\n");
+        return 0;
+    }
+
+    if (!equalArrays(gcm.tag, correct_tag2, 16)) {
+        printf("Tag doesnt match\n");
+        return 0;
+    }
+
     // gcm.plaintext = NULL;
     // result = gcmAesDecrypt(&gcm);
     // if (verbose) {
