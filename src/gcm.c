@@ -147,7 +147,6 @@ void gcmInitializeCounter(uint8_t* counter, const uint8_t* J) {
 }
 
 void gcmIncrement(uint8_t *counter, uint8_t *res) {
-    printArray(counter, 16, "Input of gcmIncrement");
     uint32_t iter = 0;
     uint8_t tmp[4] = { 0x00, 0x00, 0x00, 0x00};
     for (int i = 0; i < 4; ++i) {
@@ -161,7 +160,6 @@ void gcmIncrement(uint8_t *counter, uint8_t *res) {
         memcpy(tmp + i, res + 15 - i, 1);
     }
     memcpy(res + 12, tmp, 4);
-    printArray(res, 16, "Output of gcmIncrement");
 }
 
 void gcmPreGHASH(gcm_context_t *gcm, uint8_t *X, size_t* X_size) {
@@ -235,11 +233,8 @@ void gcmGCTREncrypt(uint8_t* input, uint8_t input_size,
         if (i >= 2)
             gcmIncrement(counter, counter);
 
-        printf( "\n========= Iteration number: %i =========\n", i);
         aesEncrypt(counter, key, tmp);
-        printArray(input + (i - 1)*16, 16, "Block before Encryption");
         xorBlocks(tmp, input + (i - 1)*16, tmp);
-        printArray(tmp, 16, "Block after Encryption");
         memcpy(output + (i - 1)*16, tmp, 16);
     }
     
@@ -295,9 +290,7 @@ void gcmAesEncrypt(gcm_context_t *gcm) {
                    gcm->ciphertext);
 
     gcmPreGHASH(gcm, X, &X_size);
-    printArray(X, X_size, "This is the input of the GHASH function");
     gcmGHASH(gcm, X, X_size, data);
-    printArray(data, 16, "This is the output of the GHASH function");
 
     aesEncrypt(gcm->J0, gcm->key, tmp);
     xorBlocks(tmp, data, data);
@@ -315,6 +308,7 @@ void gcmAesEncrypt(gcm_context_t *gcm) {
 int gcmAesDecrypt(gcm_context_t *gcm) {
 
     uint8_t data[16] = { 0 };
+    uint8_t tmp[16] = { 0 };
     uint8_t X[1000] = { 0 };
     size_t X_size = 0;
 
@@ -332,11 +326,14 @@ int gcmAesDecrypt(gcm_context_t *gcm) {
     gcmPreGHASH(gcm, X, &X_size);
     gcmGHASH(gcm, X, X_size, data);
 
-    gcmGCTREncrypt(data,
-                   16,
-                   gcm->key,
-                   gcm->J0,
-                   data);
+    aesEncrypt(gcm->J0, gcm->key, tmp);
+    xorBlocks(tmp, data, data);
+
+    //gcmGCTREncrypt(data,
+    //               16,
+    //               gcm->key,
+    //               gcm->J0,
+    //               data);
 
     // assuming tag size is 16 bytes
     if (memcmp(data, gcm->tag, 16) != 0)
