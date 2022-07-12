@@ -32,4 +32,3 @@ int equalArrays(const uint8_t* a, const uint8_t* b, int size) {
 
     return 1;
 }
-

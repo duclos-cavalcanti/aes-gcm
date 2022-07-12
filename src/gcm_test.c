@@ -230,20 +230,20 @@ int gcmTest(bool verbose) {
 
     if (verbose) {
         printArray(gcm.ciphertext, 60, "Encryption");
-        printArray(correct_encrypted, 60, "Correct Encryption");
+        printArray(correct_encrypted2, 60, "Correct Encryption");
     }
 
     if (verbose) {
         printArray(gcm.tag, 16, "Tag");
-        printArray(correct_tag, 16, "Correct Tag");
+        printArray(correct_tag2, 16, "Correct Tag");
     }
 
-    if (!equalArrays(gcm.ciphertext, correct_encrypted, 60)) {
+    if (!equalArrays(gcm.ciphertext, correct_encrypted2, 60)) {
         printf("Encryption doesnt match\n");
         return 0;
     }
 
-    if (!equalArrays(gcm.tag, correct_tag, 16)) {
+    if (!equalArrays(gcm.tag, correct_tag2, 16)) {
         printf("Tag doesnt match\n");
         return 0;
     }
