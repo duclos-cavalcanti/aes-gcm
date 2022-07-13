@@ -334,7 +334,8 @@ int gcmTestRobotCommand(bool verbose){
         0x74, 0x43, 0x6f, 0x6e,
         0x74, 0x72, 0x6f, 0x6c,
         0x4d, 0x61, 0x74, 0x65,
-        0x72, 0x69, 0x61, 0x6c, 0x00
+        0x72, 0x69, 0x61, 0x6c, 
+        0x00
     };
 
     uint8_t plain8[346] = { 0 };
@@ -469,9 +470,20 @@ int gcmTestRobotCommand(bool verbose){
 
     //size_t cipher_s = sizeof(cipher8);
     //printf("The size of the cipher is %zu \n", cipher_s);  // prints as unsigned decimal
+    
+    //printArray(gcm.plaintext, gcm.plaintext_size, "Plaintext before Decryption");
+    //printArray(gcm.ciphertext, gcm.plaintext_size, "Ciphertext before Decryption");
+    //printArray(gcm.auth, gcm.auth_size, "AAD");
+    //printArray(gcm.iv, 12, "IV");
+    //printArray(gcm.key, 16, "Key");
+
+
 
     gcmAesDecrypt(&gcm);
 
+
+
+    //printArray(gcm.plaintext, gcm.plaintext_size, "Plaintext after Decryption");
 
     if (verbose) {
         printArray(gcm.plaintext, 346, "Decryption");
