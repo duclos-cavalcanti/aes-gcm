@@ -54,7 +54,7 @@ int gcmTest(bool verbose) {
         0x6D, 0x6A, 0x8F, 0x94,
         0x67, 0x30, 0x83, 0x08,
     };
-    
+
 
     uint8_t plaintext[60] =
     {
@@ -91,7 +91,7 @@ int gcmTest(bool verbose) {
         0xBA, 0x63, 0x7B, 0x39,
     };
 
-    uint8_t ciphertext[60] = { 
+    uint8_t ciphertext[60] = {
         0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00,
@@ -123,7 +123,7 @@ int gcmTest(bool verbose) {
         0xFA, 0xCE, 0xDB, 0xAD,
         0xDE, 0xCA, 0xF8, 0x88,
     };
-    
+
 
     const uint8_t a[28] =
     {
@@ -271,12 +271,6 @@ int gcmTest(bool verbose) {
         return 0;
     }
 
-    // gcm.plaintext = NULL;
-    // result = gcmAesDecrypt(&gcm);
-    // if (verbose) {
-    //     printArray(gcm.plaintext, 60, "Decryption");
-    // }
-
     return 1;
 }
 
@@ -316,39 +310,39 @@ int gcmTestRobotCommand(bool verbose){
 
     //key flattened out for use on online Encryption-Decryption platforms
     //05b2cdea86c52d112103dd97f5827ade
-    const uint8_t key8[16] = 
-    {   
+    const uint8_t key8[16] =
+    {
         0x05, 0xb2, 0xcd, 0xea,
         0x86, 0xc5, 0x2d, 0x11,
         0x21, 0x03, 0xdd, 0x97,
-        0xf5, 0x82, 0x7a, 0xde 
+        0xf5, 0x82, 0x7a, 0xde
     };
 
     //iv flattened out for use on online Encryption-Decryption platforms
     //cafebabefacedbaddecaf888
-    const uint8_t iv8[12] = 
+    const uint8_t iv8[12] =
     {
         0xca, 0xfe, 0xba, 0xbe,
         0xfa, 0xce, 0xdb, 0xad,
         0xde, 0xca, 0xf8, 0x88
     };
 
-    
-    const uint8_t add8[21] = 
-    { 
+
+    const uint8_t add8[21] =
+    {
         0x72, 0x6f, 0x62, 0x6f,
         0x74, 0x43, 0x6f, 0x6e,
         0x74, 0x72, 0x6f, 0x6c,
         0x4d, 0x61, 0x74, 0x65,
         0x72, 0x69, 0x61, 0x6c, 0x00
     };
-    
+
     uint8_t plain8[346] = { 0 };
 
     //cipertext flattened out for use on online Encryption-Decryption platforms
     //59326c404b3b7273bde647e4cedd710ce83a5c342a2730425925590d69650de21ed5bfd69b48472e01a3a56263298b7a7bcc342ddc9fd7e8824a8a89cc6a61ef762d77ae439a7b12b1ace8b5fb6e3daa61f668f588bc52fd6cc89e399e2d2d470aaa2e6666d8603abdcdc338c8e12139386cecd484cd62a8b36dfe7192c397f1ecc0fd444a61047c90e079c3beb41426e1e600cb830436c30b6fe0938a4328c0f4c43579a4ffb7450c0ae0f0418e9a261ce54fbc7718e77a5c329f13c614c6993c70a1c68b11f0e8e33b8ba1240cb83075e1f5d3ced8326fb22e8bd07fa20c0accdfc28d90170d7d06ff243fbec7601ef10a46d15a487e9449ff3ba06415f7ef94f3773e2bbd3a45b1bc67c93e6fa6f266e72227e178147b7d1187f071e1646c783cf9622181bff39e1bddad7e19a2072a3f89bdd5b33b2c0ad71faa8171f8edead44ad0cfc38170ad7602edeba7909463690f5a12092c1cab41
-    uint8_t cipher8[346] = 
-    { 
+    uint8_t cipher8[346] =
+    {
         0x59, 0x32, 0x6c, 0x40,
         0x4b, 0x3b, 0x72, 0x73,
         0xbd, 0xe6, 0x47, 0xe4,
@@ -437,17 +431,17 @@ int gcmTestRobotCommand(bool verbose){
         0x12, 0x09, 0x2c, 0x1c,
         0xab, 0x41
     };
-    
+
     const uint8_t tag8[16] =
-    { 
-        0xc3, 0x14, 0x62, 0x1e, 
+    {
+        0xc3, 0x14, 0x62, 0x1e,
         0xa2, 0x71, 0xe0, 0x4c,
         0x65, 0x4f, 0xbb, 0x26,
         0x71, 0xae, 0x5a, 0x9a
     };
 
     int result;
-    
+
     gcm_context_t gcm = {
         .plaintext = plain8,
         .plaintext_size = 346,
@@ -487,7 +481,7 @@ int gcmTestRobotCommand(bool verbose){
     if (verbose) {
         printArray(gcm.tag, 16, "Tag");
         printArray(tag8, 16, "Correct Tag");
-    }    
+    }
 
     if (!equalArrays(gcm.tag, tag8, 16)) {
         printf("Tag doesnt match\n");

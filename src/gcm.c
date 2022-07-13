@@ -152,7 +152,7 @@ void gcmIncrement(uint8_t *counter, uint8_t *res) {
     for (int i = 0; i < 4; ++i) {
         memcpy(tmp + i, counter + 15 - i, 1);
     }
-    memcpy(&iter, tmp, 4);   
+    memcpy(&iter, tmp, 4);
     iter++;
     memcpy(res, counter, 12);
     memcpy(res + 12, &iter, 4);
@@ -237,7 +237,7 @@ void gcmGCTREncrypt(uint8_t* input, uint8_t input_size,
         xorBlocks(tmp, input + (i - 1)*16, tmp);
         memcpy(output + (i - 1)*16, tmp, 16);
     }
-    
+
     gcmIncrement(counter, counter);
     aesEncrypt(counter, key, tmp);
     xorBlocks(tmp, input + (n - 1)*16, tmp);
@@ -282,7 +282,7 @@ void gcmAesEncrypt(gcm_context_t *gcm) {
     gcmInitializeHashKey(gcm->H, gcm->key);     // Hash key is encypted 0 (128 bits)
     gcmInitializeJ(gcm->J0, gcm->iv);           // J0 = IV || 0 (31 bits) || 1
     gcmIncrement(gcm->J0, gcm->ICB);            // ICB is incremented J0
-    
+
     gcmGCTREncrypt(gcm->plaintext,
                    gcm->plaintext_size,
                    gcm->key,
@@ -295,12 +295,6 @@ void gcmAesEncrypt(gcm_context_t *gcm) {
     aesEncrypt(gcm->J0, gcm->key, tmp);
     xorBlocks(tmp, data, data);
 
-    //gcmGCTREncrypt(data,
-    //               16,
-    //               gcm->key,
-    //               gcm->J0,
-    //               data);
-//
     // assuming tag size is 16 bytes
     memcpy(gcm->tag, data, 16);
 }
@@ -328,12 +322,6 @@ int gcmAesDecrypt(gcm_context_t *gcm) {
 
     aesEncrypt(gcm->J0, gcm->key, tmp);
     xorBlocks(tmp, data, data);
-
-    //gcmGCTREncrypt(data,
-    //               16,
-    //               gcm->key,
-    //               gcm->J0,
-    //               data);
 
     // assuming tag size is 16 bytes
     if (memcmp(data, gcm->tag, 16) != 0)
