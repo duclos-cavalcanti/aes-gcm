@@ -23,6 +23,12 @@ const uint64_t lsb = 0x01;
 
 uint8_t table[16][256][16] = {};
 
+void addPadding(uint8_t* block, size_t size, uint8_t* res) {
+    int rem = size % 16;
+    memcpy(res, block, size);
+    memcpy(res + size, zero, rem);
+}
+
 void flipHalfBlock(uint8_t* buf) {
     uint8_t tmp[4];
     memcpy(tmp, buf, 4);
@@ -169,7 +175,7 @@ void gcmPreGHASH(gcm_context_t *gcm, uint8_t *X, size_t* X_size) {
 
     memcpy(X, gcm->auth, gcm->auth_size);
     *X_size += gcm->auth_size;
-    
+
     if (a_rem > 0) {
         memcpy(X + *X_size, zero, 16 - a_rem);
         *X_size += 16 - a_rem;
@@ -218,7 +224,7 @@ void gcmGHASH(gcm_context_t *gcm, uint8_t *X, const size_t X_size, uint8_t* data
     memcpy(data, tmp, 16);
 }
 
-void gcmGCTREncrypt(uint8_t* input, size_t input_size,
+void gcmGCTR(uint8_t* input, size_t input_size,
                     const uint8_t *key, const uint8_t *ICB,
                     uint8_t* output) {
 
@@ -229,7 +235,7 @@ void gcmGCTREncrypt(uint8_t* input, size_t input_size,
     uint8_t rem = input_size % 16;
 
     gcmInitializeCounter(counter, ICB); // CB1 = ICB
-    
+
     for (int i = 1; i < n; i++) {
         if (i >= 2)
             gcmIncrement(counter, counter);
@@ -239,7 +245,9 @@ void gcmGCTREncrypt(uint8_t* input, size_t input_size,
         memcpy(output + (i - 1)*16, tmp, 16);
     }
 
-    gcmIncrement(counter, counter);
+    if (input_size > 16)
+        gcmIncrement(counter, counter);
+
     aesEncrypt(counter, key, tmp);
     xorBlocks(tmp, input + (n - 1)*16, tmp);
     memcpy(output + (n - 1)*16, tmp, rem);
@@ -285,11 +293,11 @@ void gcmAesEncrypt(gcm_context_t *gcm) {
     gcmInitializeJ(gcm->J0, gcm->iv);           // J0 = IV || 0 (31 bits) || 1
     gcmIncrement(gcm->J0, gcm->ICB);            // ICB is incremented J0
 
-    gcmGCTREncrypt(gcm->plaintext,
-                   gcm->plaintext_size,
-                   gcm->key,
-                   gcm->ICB,
-                   gcm->ciphertext);
+    gcmGCTR(gcm->plaintext,
+            gcm->plaintext_size,
+            gcm->key,
+            gcm->ICB,
+            gcm->ciphertext);
 
     gcmPreGHASH(gcm, X, &X_size);
     gcmGHASH(gcm, X, X_size, data);
@@ -312,23 +320,18 @@ int gcmAesDecrypt(gcm_context_t *gcm) {
     gcmInitializeJ(gcm->J0, gcm->iv);         // Jo = IV || 0 (31 bits) || 1
     gcmIncrement(gcm->J0, gcm->ICB);
 
-    gcmGCTREncrypt(gcm->ciphertext,
-                   gcm->plaintext_size,
-                   gcm->key,
-                   gcm->ICB,
-                   gcm->plaintext);
-    
+    gcmGCTR(gcm->ciphertext,
+            gcm->plaintext_size,
+            gcm->key,
+            gcm->ICB,
+            gcm->plaintext);
+
     gcmPreGHASH(gcm, X, &X_size);
     gcmGHASH(gcm, X, X_size, data);
 
     aesEncrypt(gcm->J0, gcm->key, tmp);
     xorBlocks(tmp, data, data);
     memcpy(gcm->tag, data, 16);
-    //gcmGCTREncrypt(data,
-    //               16,
-    //               gcm->key,
-    //               gcm->J0,
-    //               data);
 
     // assuming tag size is 16 bytes
     if (memcmp(data, gcm->tag, 16) != 0)

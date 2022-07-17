@@ -249,7 +249,8 @@ int gcmTest(bool verbose) {
         return 0;
     }
 
-    gcmAesDecrypt(&gcm);
+    int ret = gcmAesDecrypt(&gcm);
+    printf("RETURN: %d\n", ret);
 
     if (verbose) {
         printArray(gcm.plaintext, 60, "Decryption");
@@ -334,7 +335,7 @@ int gcmTestRobotCommand(bool verbose){
         0x74, 0x43, 0x6f, 0x6e,
         0x74, 0x72, 0x6f, 0x6c,
         0x4d, 0x61, 0x74, 0x65,
-        0x72, 0x69, 0x61, 0x6c, 
+        0x72, 0x69, 0x61, 0x6c,
         0x00
     };
 
@@ -470,7 +471,7 @@ int gcmTestRobotCommand(bool verbose){
 
     //size_t cipher_s = sizeof(cipher8);
     //printf("The size of the cipher is %zu \n", cipher_s);  // prints as unsigned decimal
-    
+
     //printArray(gcm.plaintext, gcm.plaintext_size, "Plaintext before Decryption");
     //printArray(gcm.ciphertext, gcm.plaintext_size, "Ciphertext before Decryption");
     //printArray(gcm.auth, gcm.auth_size, "AAD");
@@ -501,4 +502,96 @@ int gcmTestRobotCommand(bool verbose){
     } else {
         printf("Tags match\n");
     }
+}
+
+int gcmLedTest(bool verbose) {
+
+    int result;
+
+    static uint8_t zero[16] =
+    {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+    };
+
+    const uint8_t key[16] =
+    {
+        0xAD, 0x7A, 0x2B, 0xD0,
+        0x3E, 0xAC, 0x83, 0x5A,
+        0x6F, 0x62, 0x0F, 0xDC,
+        0xB5, 0x06, 0xB3, 0x45,
+    };
+
+    uint8_t plaintext[6] = "LED_ON";
+
+    uint8_t ciphertext[16] = {
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+    };
+
+    const uint8_t iv[12] =
+    {
+        0x12, 0x15, 0x35, 0x24,
+        0xC0, 0x89, 0x5E, 0x81,
+        0xB2, 0xC2, 0x84, 0x65,
+    };
+
+    const uint8_t a[28] =
+    {
+        0xD6, 0x09, 0xB1, 0xF0,
+        0x56, 0x63, 0x7A, 0x0D,
+        0x46, 0xDF, 0x99, 0x8D,
+        0x88, 0xE5, 0x2E, 0x00,
+        0xB2, 0xC2, 0x84, 0x65,
+        0x12, 0x15, 0x35, 0x24,
+        0xC0, 0x89, 0x5E, 0x81,
+    };
+
+    gcm_context_t gcm = {
+        .plaintext = plaintext,
+        .plaintext_size = 6,
+        .ciphertext = ciphertext,
+        .H = NULL,
+        .key = NULL,
+        .iv = NULL,
+        .J0 = NULL,
+        .ICB = NULL,
+        .auth = a,
+        .auth_size = 20,
+        .tag = NULL
+    };
+
+
+    memcpy(gcm.H, zero, 16);
+    memcpy(gcm.key, key, 16);
+    memcpy(gcm.iv, iv, 12);
+    memcpy(gcm.J0, zero, 16);
+    memcpy(gcm.ICB, zero, 16);
+    memcpy(gcm.auth, a, 20);
+    memcpy(gcm.tag, zero, 16);
+
+    if (verbose) {
+        printf( "\n========= GCM =========\n");
+        printArray(gcm.plaintext, 16, "Input");
+    }
+
+    gcmAesEncrypt(&gcm);
+    printArray(gcm.ciphertext, 16, "Enc");
+
+    gcmAesDecrypt(&gcm);
+    printArray(gcm.plaintext, 16, "Dec");
+
+
+    printf("%s", gcm.plaintext);
+
+    if (!equalArrays(gcm.plaintext, plaintext, 16)) {
+        printf("Decryption doesnt match\n");
+        return 0;
+    }
+
+    return 1;
 }

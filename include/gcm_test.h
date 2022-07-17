@@ -4,3 +4,4 @@
 
 int gcmTest(bool verbose);
 int gcmTestRobotCommand(bool verbose);
+int gcmLedTest(bool verbose);
