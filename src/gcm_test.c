@@ -176,6 +176,7 @@ int gcmTestRobotCommand(){
         0x00
     };
 
+    char string[346] = { 0 };
     uint8_t plain8[346] = { 0 };
 
     //cipertext flattened out for use on online Encryption-Decryption platforms
@@ -293,7 +294,6 @@ int gcmTestRobotCommand(){
         .tag = { 0 }
     };
 
-    memcpy(gcm.plaintext, plain8, 346);
     memcpy(gcm.ciphertext, cipher8, 346);
     memcpy(gcm.key, key8, 16);
     memcpy(gcm.iv, iv8, 12);
@@ -302,34 +302,24 @@ int gcmTestRobotCommand(){
     gcm.plaintext_size = 346;
     gcm.auth_size = 21;
 
-    //size_t cipher_s = sizeof(cipher8);
-    //printf("The size of the cipher is %zu \n", cipher_s);  // prints as unsigned decimal
-
-    //printArray(gcm.plaintext, gcm.plaintext_size, "Plaintext before Decryption");
-    //printArray(gcm.ciphertext, gcm.plaintext_size, "Ciphertext before Decryption");
-    //printArray(gcm.auth, gcm.auth_size, "AAD");
-    //printArray(gcm.iv, 12, "IV");
-    //printArray(gcm.key, 16, "Key");
-
-
-
     gcmAesDecrypt(&gcm);
-
-
-
-    //printArray(gcm.plaintext, gcm.plaintext_size, "Plaintext after Decryption");
 
     printArray(gcm.plaintext, 346, "Decryption");
 
     printArray(gcm.tag, 16, "Tag");
+    printArray(tag8, 16, "Correct Tag");
 
     if (!equalArrays(gcm.tag, tag8, 16)) {
         printf("Tag doesnt match\n");
         return 0;
-    } else {
-        printf("Tags match\n");
-        return 1;
     }
+
+    printf("Tags match\n");
+
+    formatArrayString(gcm.plaintext, 346, string);
+    printf("Text: \n%s\n\n", string);
+
+    return 1;
 }
 
 int gcmLedTest() {

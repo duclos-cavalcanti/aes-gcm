@@ -10,6 +10,6 @@
 int main(int argc, char *argv[]) {
     // aesTest();
     // gcmTest();
-    // gcmTestRobotCommand();
-    gcmLedTest();
+    gcmTestRobotCommand();
+    // gcmLedTest();
 }
