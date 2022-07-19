@@ -3,7 +3,7 @@
 #include "aes.h"
 #include "util.h"
 
-int aesTest(bool verbose) {
+int aesTest() {
     uint8_t encrypted[16] = { 0 };
     uint8_t decrypted [16] = { 0 };
 
@@ -31,24 +31,17 @@ int aesTest(bool verbose) {
         0x70, 0xb4, 0xc5, 0x5a
     };
 
-    if (verbose) {
-        printf( "========= AES =========\n");
-        printArray(plaintext, 16, "Input");
-    }
+    printf( "========= AES =========\n");
+    printArray(plaintext, 16, "Input");
 
     aesEncrypt(plaintext, key, encrypted);
 
-    if (verbose) {
-        printArray(encrypted, 16, "Encryption");
-        printArray(correct_encrypted, 16, "Correct Encryption");
-    }
+    printArray(encrypted, 16, "Encryption");
+    printArray(correct_encrypted, 16, "Correct Encryption");
 
     aesDecrypt(encrypted, key, decrypted);
 
-    if (verbose) {
-        printArray(decrypted, 16, "Decryption");
-    }
-
+    printArray(decrypted, 16, "Decryption");
 
     if (!equalArrays(encrypted, correct_encrypted, 16)) {
         printf("Encryption doesnt match\n");

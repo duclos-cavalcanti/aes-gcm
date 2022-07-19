@@ -8,8 +8,8 @@
 #include "util.h"
 
 int main(int argc, char *argv[]) {
-    //aesTest(true);
-    gcmTest(true);
-    //gcmTestRobotCommand(true);
-    gcmLedTest(true);
+    // aesTest();
+    // gcmTest();
+    // gcmTestRobotCommand();
+    gcmLedTest();
 }

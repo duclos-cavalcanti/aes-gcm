@@ -2,4 +2,4 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-int aesTest(bool verbose);
+int aesTest();

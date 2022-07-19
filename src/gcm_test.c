@@ -3,51 +3,11 @@
 #include "gcm.h"
 #include "util.h"
 
-int gcmTest(bool verbose) {
+int gcmTest() {
 
-    int result;
-
-    static uint8_t h_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    static uint8_t j0_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    static uint8_t icb_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    static uint8_t tag_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
+    int ret;
 
     const uint8_t key[16] =
-    {
-        0xAD, 0x7A, 0x2B, 0xD0,
-        0x3E, 0xAC, 0x83, 0x5A,
-        0x6F, 0x62, 0x0F, 0xDC,
-        0xB5, 0x06, 0xB3, 0x45,
-    };
-
-    const uint8_t key2[16] =
     {
         0xFE, 0xFF, 0xE9, 0x92,
         0x86, 0x65, 0x73, 0x1C,
@@ -55,24 +15,7 @@ int gcmTest(bool verbose) {
         0x67, 0x30, 0x83, 0x08,
     };
 
-
     uint8_t plaintext[60] =
-    {
-        0x08, 0x00, 0x0F, 0x10,
-        0x11, 0x12, 0x13, 0x14,
-        0x15, 0x16, 0x17, 0x18,
-        0x19, 0x1A, 0x1B, 0x1C,
-        0x1D, 0x1E, 0x1F, 0x20,
-        0x21, 0x22, 0x23, 0x24,
-        0x25, 0x26, 0x27, 0x28,
-        0x29, 0x2A, 0x2B, 0x2C,
-        0x2D, 0x2E, 0x2F, 0x30,
-        0x31, 0x32, 0x33, 0x34,
-        0x35, 0x36, 0x37, 0x38,
-        0x39, 0x3A, 0x00, 0x02,
-    };
-
-    uint8_t plaintext2[60] =
     {
         0xD9, 0x31, 0x32, 0x25,
         0xF8, 0x84, 0x06, 0xE5,
@@ -91,52 +34,14 @@ int gcmTest(bool verbose) {
         0xBA, 0x63, 0x7B, 0x39,
     };
 
-    uint8_t ciphertext[60] = {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
     const uint8_t iv[12] =
-    {
-        0x12, 0x15, 0x35, 0x24,
-        0xC0, 0x89, 0x5E, 0x81,
-        0xB2, 0xC2, 0x84, 0x65,
-    };
-
-    const uint8_t iv2[12] =
     {
         0xCA, 0xFE, 0xBA, 0xBE,
         0xFA, 0xCE, 0xDB, 0xAD,
         0xDE, 0xCA, 0xF8, 0x88,
     };
 
-
     const uint8_t a[28] =
-    {
-        0xD6, 0x09, 0xB1, 0xF0,
-        0x56, 0x63, 0x7A, 0x0D,
-        0x46, 0xDF, 0x99, 0x8D,
-        0x88, 0xE5, 0x2E, 0x00,
-        0xB2, 0xC2, 0x84, 0x65,
-        0x12, 0x15, 0x35, 0x24,
-        0xC0, 0x89, 0x5E, 0x81,
-    };
-
-    const uint8_t a2[20] =
     {
         0xFE, 0xED, 0xFA, 0xCE,
         0xDE, 0xAD, 0xBE, 0xEF,
@@ -146,22 +51,6 @@ int gcmTest(bool verbose) {
     };
 
     const uint8_t correct_encrypted[] =
-    {
-        0x70, 0x1A, 0xFA, 0x1C,
-        0xC0, 0x39, 0xC0, 0xD7,
-        0x65, 0x12, 0x8A, 0x66,
-        0x5D, 0xAB, 0x69, 0x24,
-        0x38, 0x99, 0xBF, 0x73,
-        0x18, 0xCC, 0xDC, 0x81,
-        0xC9, 0x93, 0x1D, 0xA1,
-        0x7F, 0xBE, 0x8E, 0xDD,
-        0x7D, 0x17, 0xCB, 0x8B,
-        0x4C, 0x26, 0xFC, 0x81,
-        0xE3, 0x28, 0x4F, 0x2B,
-        0x7F, 0xBA, 0x71, 0x3D,
-    };
-
-    const uint8_t correct_encrypted2[] =
     {
         0x42, 0x83, 0x1E, 0xC2,
         0x21, 0x77, 0x74, 0x24,
@@ -180,16 +69,7 @@ int gcmTest(bool verbose) {
         0x3D, 0x58, 0xE0, 0x91,
     };
 
-
     const uint8_t correct_tag[] =
-    {
-        0x4F, 0x8D, 0x55, 0xE7,
-        0xD3, 0xF0, 0x6F, 0xD5,
-        0xA1, 0x3C, 0x0C, 0x29,
-        0xB9, 0xD5, 0xB8, 0x80,
-    };
-
-    const uint8_t correct_tag2[] =
     {
         0x5B, 0xC9, 0x4F, 0xBC,
         0x32, 0x21, 0xA5, 0xDB,
@@ -198,76 +78,63 @@ int gcmTest(bool verbose) {
     };
 
     gcm_context_t gcm = {
-        .plaintext = plaintext2,
-        .plaintext_size = 60,
-        .ciphertext = ciphertext,
-        .H = NULL,
-        .key = NULL,
-        .iv = NULL,
-        .J0 = NULL,
-        .ICB = NULL,
-        .auth = a2,
-        .auth_size = 20,
-        .tag = NULL
+        .plaintext = { 0 },
+        .plaintext_size = 0,
+        .ciphertext = { 0 },
+        .H = { 0 },
+        .key = { 0 },
+        .iv = { 0 },
+        .J0 = { 0 },
+        .ICB = { 0 },
+        .auth = { 0 },
+        .auth_size = 0,
+        .tag = { 0 }
     };
 
+    memcpy(gcm.plaintext, plaintext, 60);
+    memcpy(gcm.iv, iv, 12);
+    memcpy(gcm.key, key, 16);
+    memcpy(gcm.auth, a, 20);
 
-    //memcpy(gcm.plaintext, plaintext2, 60);
-    //memcpy(gcm.ciphertext, ciphertext, 60);
-    memcpy(gcm.H, h_initial, 16);
-    memcpy(gcm.key, key2, 16);
-    memcpy(gcm.iv, iv2, 12);
-    memcpy(gcm.J0, j0_initial, 16);
-    memcpy(gcm.ICB, icb_initial, 16);
-    memcpy(gcm.auth, a2, 20);
-    memcpy(gcm.tag, tag_initial, 16);
+    gcm.plaintext_size = 60;
+    gcm.auth_size = 20;
 
-    if (verbose) {
-        printf( "\n========= GCM =========\n");
-        printArray(gcm.plaintext, 60, "Input");
-    }
+    printf( "\n========= GCM =========\n");
+    printArray(gcm.plaintext, 60, "Input");
 
     gcmAesEncrypt(&gcm);
 
-    if (verbose) {
-        printArray(gcm.ciphertext, 60, "Encryption");
-        printArray(correct_encrypted2, 60, "Correct Encryption");
-    }
+    printArray(gcm.ciphertext, 60, "Encryption");
+    printArray(correct_encrypted, 60, "Correct Encryption");
 
-    if (verbose) {
-        printArray(gcm.tag, 16, "Tag");
-        printArray(correct_tag2, 16, "Correct Tag");
-    }
+    printArray(gcm.tag, 16, "Tag");
+    printArray(correct_tag, 16, "Correct Tag");
 
-    if (!equalArrays(gcm.ciphertext, correct_encrypted2, 60)) {
-        printf("Encryption doesnt match\n");
-        return 0;
-    }
-
-    if (!equalArrays(gcm.tag, correct_tag2, 16)) {
+    if (!equalArrays(gcm.tag, correct_tag, 16)) {
         printf("Tag doesnt match\n");
         return 0;
     }
 
-    int ret = gcmAesDecrypt(&gcm);
-    printf("RETURN: %d\n", ret);
-
-    if (verbose) {
-        printArray(gcm.plaintext, 60, "Decryption");
-        printArray(plaintext2, 60, "Correct Decryption");
+    if (!equalArrays(gcm.ciphertext, correct_encrypted, 60)) {
+        printf("Encryption doesnt match\n");
+        return 0;
     }
 
-    if (verbose) {
-        printArray(gcm.tag, 16, "Tag");
-        printArray(correct_tag2, 16, "Correct Tag");
-    }
+    ret = gcmAesDecrypt(&gcm);
 
-    if (!equalArrays(gcm.plaintext, plaintext2, 60)) {
+    printArray(gcm.plaintext, 60, "Decryption");
+    printArray(plaintext, 60, "Correct Decryption");
+
+    printArray(gcm.tag, 16, "Tag");
+    printArray(correct_tag, 16, "Correct Tag");
+    printf("ret %d\n", ret);
+
+    if (!equalArrays(gcm.plaintext, plaintext, 60)) {
         printf("Decryption doesnt match\n");
         return 0;
     }
 
-    if (!equalArrays(gcm.tag, correct_tag2, 16)) {
+    if (!equalArrays(gcm.tag, correct_tag, 16)) {
         printf("Tag doesnt match\n");
         return 0;
     }
@@ -275,39 +142,9 @@ int gcmTest(bool verbose) {
     return 1;
 }
 
-int gcmTestRobotCommand(bool verbose){
+int gcmTestRobotCommand(){
 
-    static uint8_t h_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    static uint8_t j0_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    static uint8_t icb_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    static uint8_t tag_initial[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
+    int result;
 
     //key flattened out for use on online Encryption-Decryption platforms
     //05b2cdea86c52d112103dd97f5827ade
@@ -442,32 +279,28 @@ int gcmTestRobotCommand(bool verbose){
         0x71, 0xae, 0x5a, 0x9a
     };
 
-    int result;
-
     gcm_context_t gcm = {
-        .plaintext = plain8,
-        .plaintext_size = 346,
-        .ciphertext = cipher8,
-        .H = NULL,
-        .key = NULL,
-        .iv = NULL,
-        .J0 = NULL,
-        .ICB = NULL,
-        .auth = add8,
-        .auth_size = 21,
-        .tag = NULL
+        .plaintext = { 0 },
+        .plaintext_size = 0,
+        .ciphertext = { 0 },
+        .H = { 0 },
+        .key = { 0 },
+        .iv = { 0 },
+        .J0 = { 0 },
+        .ICB = { 0 },
+        .auth = { 0 },
+        .auth_size = 0,
+        .tag = { 0 }
     };
 
-
-    //memcpy(gcm.ciphertext, cipher8, 346);
-    //memcpy(gcm.plaintext, plain8, 346);
-    memcpy(gcm.H, h_initial, 16);
+    memcpy(gcm.plaintext, plain8, 346);
+    memcpy(gcm.ciphertext, cipher8, 346);
     memcpy(gcm.key, key8, 16);
     memcpy(gcm.iv, iv8, 12);
-    memcpy(gcm.J0, j0_initial, 16);
-    memcpy(gcm.ICB, icb_initial, 16);
-    //memcpy(gcm.auth, add8, 21);
-    memcpy(gcm.tag, tag_initial, 16);
+    memcpy(gcm.auth, add8, 21);
+
+    gcm.plaintext_size = 346;
+    gcm.auth_size = 21;
 
     //size_t cipher_s = sizeof(cipher8);
     //printf("The size of the cipher is %zu \n", cipher_s);  // prints as unsigned decimal
@@ -486,62 +319,42 @@ int gcmTestRobotCommand(bool verbose){
 
     //printArray(gcm.plaintext, gcm.plaintext_size, "Plaintext after Decryption");
 
-    if (verbose) {
-        printArray(gcm.plaintext, 346, "Decryption");
-        //printArray(plaintext2, 60, "Correct Decryption");
-    }
+    printArray(gcm.plaintext, 346, "Decryption");
 
-    if (verbose) {
-        printArray(gcm.tag, 16, "Tag");
-        printArray(tag8, 16, "Correct Tag");
-    }
+    printArray(gcm.tag, 16, "Tag");
 
     if (!equalArrays(gcm.tag, tag8, 16)) {
         printf("Tag doesnt match\n");
         return 0;
     } else {
         printf("Tags match\n");
+        return 1;
     }
 }
 
-int gcmLedTest(bool verbose) {
+int gcmLedTest() {
 
-    int result;
+  int result;
 
-    static uint8_t zero[16] =
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    const uint8_t key[16] =
-    {
+  gcm_context_t gcm = {
+      .plaintext = { 0 },
+      .plaintext_size = 0,
+      .ciphertext = { 0 },
+      .H = { 0 },
+      .key = {
         0xAD, 0x7A, 0x2B, 0xD0,
         0x3E, 0xAC, 0x83, 0x5A,
         0x6F, 0x62, 0x0F, 0xDC,
         0xB5, 0x06, 0xB3, 0x45,
-    };
-
-    uint8_t plaintext[6] = "LED_ON";
-
-    uint8_t ciphertext[16] = {
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-    };
-
-    const uint8_t iv[12] =
-    {
-        0x12, 0x15, 0x35, 0x24,
+      },
+      .iv = {
+        0x00, 0x06, 0x35, 0x24,
         0xC0, 0x89, 0x5E, 0x81,
         0xB2, 0xC2, 0x84, 0x65,
-    };
-
-    const uint8_t a[28] =
-    {
+      },
+      .J0 = { 0 },
+      .ICB = { 0 },
+      .auth = {
         0xD6, 0x09, 0xB1, 0xF0,
         0x56, 0x63, 0x7A, 0x0D,
         0x46, 0xDF, 0x99, 0x8D,
@@ -549,46 +362,29 @@ int gcmLedTest(bool verbose) {
         0xB2, 0xC2, 0x84, 0x65,
         0x12, 0x15, 0x35, 0x24,
         0xC0, 0x89, 0x5E, 0x81,
-    };
+      },
+      .auth_size = 28,
+      .tag = { 0 }
+  };
 
-    gcm_context_t gcm = {
-        .plaintext = plaintext,
-        .plaintext_size = 6,
-        .ciphertext = ciphertext,
-        .H = NULL,
-        .key = NULL,
-        .iv = NULL,
-        .J0 = NULL,
-        .ICB = NULL,
-        .auth = a,
-        .auth_size = 20,
-        .tag = NULL
-    };
+    uint8_t LED_ON[6] = { 0x4c,  0x45,  0x44,  0x5f,  0x4f,  0x4E };
 
+    printf( "\n========= LED ON =========\n");
+    memcpy(gcm.plaintext, LED_ON, 6);
+    printArray(gcm.plaintext, 6, "Input");
 
-    memcpy(gcm.H, zero, 16);
-    memcpy(gcm.key, key, 16);
-    memcpy(gcm.iv, iv, 12);
-    memcpy(gcm.J0, zero, 16);
-    memcpy(gcm.ICB, zero, 16);
-    memcpy(gcm.auth, a, 20);
-    memcpy(gcm.tag, zero, 16);
-
-    if (verbose) {
-        printf( "\n========= GCM =========\n");
-        printArray(gcm.plaintext, 16, "Input");
-    }
-
+    gcm.plaintext_size = 6;
     gcmAesEncrypt(&gcm);
-    printArray(gcm.ciphertext, 16, "Enc");
 
-    gcmAesDecrypt(&gcm);
-    printArray(gcm.plaintext, 16, "Dec");
+    printArray(gcm.ciphertext, 6, "Enc");
 
+    printArray(gcm.tag, 16, "Tag");
 
-    printf("%s", gcm.plaintext);
+    result = gcmAesDecrypt(&gcm);
 
-    if (!equalArrays(gcm.plaintext, plaintext, 16)) {
+    printArray(gcm.plaintext, 6, "DEC");
+
+    if (!equalArrays(gcm.plaintext, LED_ON, 6)) {
         printf("Decryption doesnt match\n");
         return 0;
     }

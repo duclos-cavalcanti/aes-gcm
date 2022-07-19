@@ -225,8 +225,8 @@ void gcmGHASH(gcm_context_t *gcm, uint8_t *X, const size_t X_size, uint8_t* data
 }
 
 void gcmGCTR(uint8_t* input, size_t input_size,
-                    const uint8_t *key, const uint8_t *ICB,
-                    uint8_t* output) {
+             const uint8_t *key, const uint8_t *ICB,
+             uint8_t* output) {
 
     uint8_t tmp[16] = { 0 };
     uint8_t counter[16] = { 0 };
@@ -252,31 +252,6 @@ void gcmGCTR(uint8_t* input, size_t input_size,
     xorBlocks(tmp, input + (n - 1)*16, tmp);
     memcpy(output + (n - 1)*16, tmp, rem);
 
-}
-
-void gcmGCTRDecrypt(uint8_t* input, uint8_t input_size,
-                    const uint8_t *key, const uint8_t *ICB,
-                    uint8_t* output) {
-    uint8_t tmp[16] = { 0 };
-    uint8_t counter[16] = { 0 };
-
-    uint8_t n = (input_size % 16 == 0) ? input_size / 16 : input_size / 16 + 1;
-    uint8_t rem = input_size % 16;
-
-    gcmInitializeCounter(counter, ICB); // CB1 = ICB
-
-    for (int i = 1; i < n; i++) {
-        if (i >= 2)
-            gcmIncrement(counter, counter);
-
-        aesDecrypt(counter, key, tmp);
-        xorBlocks(tmp, input + (i - 1)*16, tmp);
-        memcpy(output + (i - 1)*16, tmp, 16);
-    }
-
-    aesDecrypt(counter, key, tmp);
-    xorBlocks(tmp, input + (n - 1)*16, tmp);
-    memcpy(output + (n - 1)*16, tmp, rem);
 }
 
 // LIMITATIONS
@@ -313,9 +288,11 @@ int gcmAesDecrypt(gcm_context_t *gcm) {
 
     uint8_t data[16] = { 0 };
     uint8_t tmp[16] = { 0 };
+    uint8_t tag_[16] = { 0 };
     uint8_t X[1000] = { 0 };
     size_t X_size = 0;
 
+    memcpy(tag_, gcm->tag, 16);
     gcmInitializeHashKey(gcm->H, gcm->key);   // Hash key is encypted 0 (128 bits)
     gcmInitializeJ(gcm->J0, gcm->iv);         // Jo = IV || 0 (31 bits) || 1
     gcmIncrement(gcm->J0, gcm->ICB);
@@ -334,7 +311,7 @@ int gcmAesDecrypt(gcm_context_t *gcm) {
     memcpy(gcm->tag, data, 16);
 
     // assuming tag size is 16 bytes
-    if (memcmp(data, gcm->tag, 16) != 0)
+    if (memcmp(tag_, gcm->tag, 16) != 0)
         return -1;
     else
         return 0;
