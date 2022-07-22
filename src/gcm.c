@@ -255,6 +255,7 @@ void gcmGCTR(uint8_t* input, size_t input_size,
 }
 
 // LIMITATIONS
+// maximum size of plaintext and ciphertext = 1000 Bytes!
 // maximum size of plaintext + authentication = 1000 Bytes!
 // ciphertext in struct has to have some size!
 void gcmAesEncrypt(gcm_context_t *gcm) {
